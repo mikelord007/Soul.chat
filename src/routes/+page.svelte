@@ -1,17 +1,21 @@
-<script>
+<script lang="ts">
 	import Logo from '$lib/assets/images/logos/logo.png';
 	import SoulTkn from '$lib/assets/images/icons/soultkn.svg';
 	import Cross from '$lib/assets/images/icons/cross.svg';
 	import Borders from '$lib/components/Borders/index.svelte';
+	import Button from '$lib/components/Button/index.svelte';
 
-	let interests = [];
-	const removeInterest = (interest) => {
+	let inputValue: string = '';
+	let interests: Array<string> = [];
+
+	const removeInterest = (interest: string) => {
 		interests = interests.filter((elem) => elem !== interest);
 	};
-	const addInterest = (event) => {
-		if (event.keyCode === 13) {
-			interests = [...interests, event.target.value];
-			event.target.value = '';
+
+	const addInterest = (event: KeyboardEvent) => {
+		if (event.code === 'Enter') {
+			interests = Array.from(new Set([...interests, inputValue]));
+			inputValue = '';
 		}
 	};
 </script>
@@ -66,6 +70,7 @@
 				<input
 					class="px-2 py-1 w-[15ch] outline-none bg-transparent border-[2.4px] border-solid border-[#646464] shrink-0 relative top-[1px]"
 					placeholder="type to add sth"
+					bind:value={inputValue}
 					on:keypress={addInterest}
 				/>
 			</div>
@@ -73,19 +78,16 @@
 	</div>
 	<div class="px-12 mt-14 ml-[1px] flex items-center gap-2">
 		<input
-			class="cursor-pointer accent-[#424242] hover:accent-[#424242] outline-none aspect-square w-[1.1rem]"
+			class="cursor-pointer accent-[#424242] hover:accent-[#424242] outline-none aspect-square w-[0.9rem]"
 			type="checkbox"
 			id="soulReaper"
 		/>
 		<label for="soulReaper" class="cursor-pointer select-none text-sm">
-			Connect with the most Soul Reaper
+			Connect with the most Soulful
 		</label>
 	</div>
 	<div class="px-12 mt-20 mb-12">
-		<button class="px-6 py-4 m-auto block relative">
-			<Borders width="0.2rem" height="0.2rem" />
-			Connect your wallet
-		</button>
+		<Button buttonContent="Connect Your Wallet" />
 	</div>
 </div>
 
