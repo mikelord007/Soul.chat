@@ -65,7 +65,7 @@
 				{/each}
 				<input
 					class="px-2 py-1 w-[15ch] outline-none bg-transparent border-[2.4px] border-solid border-[#646464] shrink-0 relative top-[1px]"
-					placeholder="add sth"
+					placeholder="type to add sth"
 					on:keypress={addInterest}
 				/>
 			</div>
@@ -73,11 +73,11 @@
 	</div>
 	<div class="px-12 mt-14 ml-[1px] flex items-center gap-2">
 		<input
-			class="cursor-pointer accent-[#424242] hover:accent-[#424242] outline-none"
+			class="cursor-pointer accent-[#424242] hover:accent-[#424242] outline-none aspect-square w-[1.1rem]"
 			type="checkbox"
 			id="soulReaper"
 		/>
-		<label for="soulReaper" class="cursor-pointer select-none text-xs">
+		<label for="soulReaper" class="cursor-pointer select-none text-sm">
 			Connect with the most Soul Reaper
 		</label>
 	</div>
