@@ -13,7 +13,10 @@
 	};
 
 	const addInterest = (event: KeyboardEvent) => {
-		if (event.code === 'Enter') {
+		if (
+			(event.code === 'Enter' || event.code === 'NumpadEnter' || event.keyCode === 13) &&
+			inputValue !== ''
+		) {
 			interests = Array.from(new Set([...interests, inputValue]));
 			inputValue = '';
 		}
@@ -25,10 +28,10 @@
 	<div class="px-8 pt-11">
 		<img class="m-auto w-32" src={Logo} alt="soul chat logo" />
 	</div>
-	<blockquote class="px-12 mt-8 pb-[0.8em] font-semibold tracking-[0.18em]">
-		“You can always trust random strangers on the internet with your life.”
+	<blockquote class="px-12 mt-8 pb-[0.8em] font-semibold tracking-[0.18em] break-all">
+		“ Man suffers only because he takes seriously what the gods made for fun. ”
 	</blockquote>
-	<p class="px-12 tracking-[0.18em] font-normal text-right">- Sun Tzu, prolly</p>
+	<p class="px-12 tracking-[0.18em] font-normal text-right">- Alan Watts</p>
 	<p class="px-12 mt-20 font-semibold tracking-[0.195em] hover:cursor-pointer">
 		<span class="underline">How this works</span>?
 	</p>
