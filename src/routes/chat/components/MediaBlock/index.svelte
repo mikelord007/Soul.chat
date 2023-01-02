@@ -1,6 +1,8 @@
 <script lang="ts">
 	import Borders from '$lib/components/Borders/index.svelte';
 	import SoulTkn from '$lib/assets/images/icons/soultkn.svg';
+
+	export let videoElem;
 </script>
 
 <div class="flex flex-col w-full min-w-[280px] aspect-[280/300] relative m-auto p-6">
@@ -22,6 +24,7 @@
 		</button>
 	</div>
 	<div class="py-4 pb-0 h-full">
-		<video class="w-full h-full bg-black" />
+		<!-- svelte-ignore a11y-media-has-caption -->
+		<video bind:this={videoElem} class="w-full h-full bg-black" />
 	</div>
 </div>
