@@ -14,7 +14,6 @@
 	let otherSoulId = '';
 	let ownVideoElem: HTMLVideoElement;
 	let otherVideoElem: HTMLVideoElement;
-	let srcObjTest = '';
 
 	onMount(async () => {
 		stream = await navigator.mediaDevices.getUserMedia({
@@ -45,7 +44,7 @@
 				io?.emit('passingPeerData', data, parsedParams, otherSoulId);
 			});
 
-			peer?.on('stream', (stream) => {
+			peer?.on('stream', (stream: MediaStream) => {
 				console.log('stream received');
 				if ('srcObject' in otherVideoElem) {
 					otherVideoElem.srcObject = stream;
@@ -57,25 +56,32 @@
 			});
 		});
 
-		io.on('matchMade', (peerData, otherSoulParams) => {
+		io.on('matchMade', (peerData, otherSoulParams, otherSoulSocketId) => {
 			console.log('peer data matched: ', peerData);
 			peer = new SimplePeer({ stream: stream });
 			peer.signal(peerData);
 			otherSoulData = otherSoulParams;
-			console.log('matchmade');
 
-			peer?.on('stream', (stream) => {
+			peer.on('signal', (data) => {
+				io?.emit('rePassingPeerData', data, otherSoulSocketId);
+			});
+
+			peer?.on('stream', (stream: MediaStream) => {
 				console.log('stream received');
 				console.log('stream: ', stream);
 				if ('srcObject' in otherVideoElem) {
 					otherVideoElem.srcObject = stream;
-					srcObjTest = stream;
 				} else {
 					otherVideoElem.src = window.URL.createObjectURL(stream); // for older browsers
 				}
 
 				otherVideoElem.play();
 			});
+		});
+
+		io.on('rePass', (peerData) => {
+			console.log('here in rePass');
+			peer?.signal(peerData);
 		});
 	});
 
@@ -93,7 +99,7 @@
 	};
 </script>
 
-<div class="flex flex-col px-6 mt-8 gap-4">
+<div class="flex flex-col px-6 mt-8 gap-4" id="vid">
 	<MediaBlock bind:videoElem={otherVideoElem} />
 	<MediaBlock bind:videoElem={ownVideoElem} />
 </div>
