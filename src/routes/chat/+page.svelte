@@ -4,48 +4,46 @@
 	import ioClient, { Socket } from 'socket.io-client';
 	import { onMount, onDestroy } from 'svelte';
 	import SimplePeer from 'simple-peer/simplepeer.min.js';
+	import type { SoulParams } from './interfaces';
 
 	let affirm = 0;
 	let buttonContent = 'Skip Soul';
 	let io: Socket | null;
 	let peer: SimplePeer | undefined;
 	let stream: MediaStream | undefined;
-	let otherSoulData;
-	let otherSoulId = '';
 	let ownVideoElem: HTMLVideoElement;
 	let otherVideoElem: HTMLVideoElement;
+	let ownSoulParams: SoulParams;
+	let otherSoulParams: SoulParams;
+	let otherSoulId = '';
 
-	onMount(async () => {
+	const playOwnMedia = async () => {
 		stream = await navigator.mediaDevices.getUserMedia({
 			video: true,
 			audio: true
 		});
 		ownVideoElem.srcObject = stream;
-		// ownVideoElem.play();
+		ownVideoElem.play();
+	};
 
-		io = ioClient('http://localhost:5000');
+	const parseSoulParams = () => {
 		let params = new URLSearchParams(window.location.search);
+		params.forEach((val, key) => (ownSoulParams[key as keyof Object] = JSON.parse(val)));
+	};
 
-		let parsedParams = {};
+	const InitializeSocketListeners = (io: Socket) => {
+		io.emit('interests', ownSoulParams);
 
-		params.forEach((val, key) => (parsedParams[key as keyof Object] = JSON.parse(val)));
-
-		io.emit('interests', parsedParams);
-
-		io.on('initiate', (otherSoulParams, otherSoulSocketId) => {
-			console.log('streaminitiate: ', stream);
+		io.on('initiateWebRTC', (otherSoulParams_, otherSoulSocketId) => {
 			peer = new SimplePeer({ initiator: true, stream: stream });
-			otherSoulData = otherSoulParams;
+			otherSoulParams = otherSoulParams_;
 			otherSoulId = otherSoulSocketId;
-			console.log('intiating');
 
 			peer?.on('signal', (data) => {
-				console.log('peer initiaized');
-				io?.emit('passingPeerData', data, parsedParams, otherSoulId);
+				io?.emit('passingPeerData', data, ownSoulParams, otherSoulId);
 			});
 
 			peer?.on('stream', (stream: MediaStream) => {
-				console.log('stream received');
 				if ('srcObject' in otherVideoElem) {
 					otherVideoElem.srcObject = stream;
 				} else {
@@ -56,19 +54,17 @@
 			});
 		});
 
-		io.on('matchMade', (peerData, otherSoulParams, otherSoulSocketId) => {
-			console.log('peer data matched: ', peerData);
+		io.on('matchMadeWithRemoteWebRTC', (peerData, otherSoulParams_, otherSoulSocketId) => {
 			peer = new SimplePeer({ stream: stream });
 			peer.signal(peerData);
-			otherSoulData = otherSoulParams;
+			otherSoulParams = otherSoulParams_;
+			otherSoulId = otherSoulSocketId;
 
 			peer.on('signal', (data) => {
-				io?.emit('rePassingPeerData', data, otherSoulSocketId);
+				io?.emit('rePassingPeerData', data, otherSoulId);
 			});
 
 			peer?.on('stream', (stream: MediaStream) => {
-				console.log('stream received');
-				console.log('stream: ', stream);
 				if ('srcObject' in otherVideoElem) {
 					otherVideoElem.srcObject = stream;
 				} else {
@@ -79,10 +75,19 @@
 			});
 		});
 
-		io.on('rePass', (peerData) => {
-			console.log('here in rePass');
+		io.on('rePassedStreamData', (peerData) => {
 			peer?.signal(peerData);
 		});
+	};
+
+	onMount(() => {
+		playOwnMedia();
+
+		parseSoulParams();
+
+		io = ioClient('http://localhost:5000');
+
+		InitializeSocketListeners(io);
 	});
 
 	onDestroy(() => {
