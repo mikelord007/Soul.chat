@@ -28,7 +28,11 @@
 
 	const parseSoulParams = () => {
 		let params = new URLSearchParams(window.location.search);
-		params.forEach((val, key) => (ownSoulParams[key as keyof Object] = JSON.parse(val)));
+		let tempParams: SoulParams | {} = {};
+		params.forEach((val, key) => {
+			tempParams[key as keyof Object] = JSON.parse(val);
+		});
+		ownSoulParams = tempParams;
 	};
 
 	const InitializeSocketListeners = (io: Socket) => {
