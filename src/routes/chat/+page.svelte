@@ -32,8 +32,6 @@
 	};
 
 	const InitializeSocketListeners = (io: Socket) => {
-		io.emit('interests', ownSoulParams);
-
 		io.on('initiateWebRTC', (otherSoulParams_, otherSoulSocketId) => {
 			peer = new SimplePeer({ initiator: true, stream: stream });
 			otherSoulParams = otherSoulParams_;
@@ -58,10 +56,9 @@
 			peer = new SimplePeer({ stream: stream });
 			peer.signal(peerData);
 			otherSoulParams = otherSoulParams_;
-			otherSoulId = otherSoulSocketId;
 
 			peer.on('signal', (data) => {
-				io?.emit('rePassingPeerData', data, otherSoulId);
+				io?.emit('rePassingPeerData', data, otherSoulSocketId);
 			});
 
 			peer?.on('stream', (stream: MediaStream) => {
@@ -86,6 +83,7 @@
 		parseSoulParams();
 
 		io = ioClient('http://localhost:5000');
+		io.emit('interests', ownSoulParams);
 
 		InitializeSocketListeners(io);
 	});

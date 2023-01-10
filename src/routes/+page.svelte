@@ -4,7 +4,9 @@
 	import Cross from '$lib/assets/images/icons/cross.svg';
 	import Borders from '$lib/components/Borders/index.svelte';
 	import Button from '$lib/components/Button/index.svelte';
+	import { polygonMumbai } from '@wagmi/core/chains';
 	import { goto } from '$app/navigation';
+	import { networkConnectionData as ntwrkData } from '$lib/stores';
 
 	let inputValue: string = '';
 	let interests: Array<string> = [];
@@ -34,6 +36,18 @@
 			chatPage.searchParams.append(key, val);
 		});
 		goto(chatPage);
+	};
+
+	const connectWallet = async () => {
+		await $ntwrkData.web3Modal?.openModal({ route: 'ConnectWallet' });
+
+		if ($ntwrkData.ethereumClient?.getNetwork().chain?.id !== polygonMumbai.id) {
+			$ntwrkData.ethereumClient?.switchNetwork({ chainId: polygonMumbai.id });
+		}
+	};
+
+	const switchNetwork = async () => {
+		await $ntwrkData.ethereumClient?.switchNetwork({ chainId: polygonMumbai.id });
 	};
 </script>
 
@@ -103,7 +117,18 @@
 	</label>
 </div>
 <div class="px-12 mt-20 mb-12">
-	<Button on:click={connectSoul} buttonContent="Connect Your Wallet" />
+	<Button
+		on:click={() => {
+			if ($ntwrkData.walletConnected && $ntwrkData.correctNetwork) connectSoul();
+			else if ($ntwrkData.walletConnected) switchNetwork();
+			else connectWallet();
+		}}
+		buttonContent={$ntwrkData.walletConnected
+			? $ntwrkData.correctNetwork
+				? 'Connect with a Soul'
+				: 'Change Network'
+			: 'Connect Your Wallet'}
+	/>
 </div>
 
 <style>

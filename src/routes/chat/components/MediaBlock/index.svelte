@@ -25,7 +25,7 @@
 	</div>
 	<div class="py-4 pb-0 h-full">
 		<!-- svelte-ignore a11y-media-has-caption -->
-		<video bind:this={videoElem} class="w-full h-full bg-black" />
+		<video bind:this={videoElem} class="w-[5rem] h-[3rem] bg-black" />
 	</div>
 </div>
 
