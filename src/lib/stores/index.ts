@@ -1,7 +1,8 @@
-import { writable } from 'svelte/store';
+import { readable, writable } from 'svelte/store';
 import type { Writable } from 'svelte/store';
 import type { Web3Modal } from '@web3modal/html';
 import type { EthereumClient } from '@web3modal/ethereum';
+import { browser } from '$app/environment';
 
 interface networkConnectionData {
     walletConnected: boolean,
@@ -16,3 +17,15 @@ export const networkConnectionData : Writable<networkConnectionData> = writable(
     ethereumClient: undefined,
     web3Modal: undefined
 });
+
+export const deviceSize = readable({size: 'sm'},(set) => {
+    
+    if(browser)
+        set({
+            size: window?.innerWidth>=1536?'2xl':
+            window?.innerWidth>=1280?'xl':
+            window?.innerWidth>=1024?'lg':
+            window?.innerWidth>=768?'md':
+            'sm'
+        })
+})

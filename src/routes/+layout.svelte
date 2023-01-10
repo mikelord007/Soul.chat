@@ -5,7 +5,11 @@
 	import { polygonMumbai } from '@wagmi/core/chains';
 	import { Web3Modal } from '@web3modal/html';
 	import { EthereumClient, modalConnectors, walletConnectProvider } from '@web3modal/ethereum';
-	import { networkConnectionData } from '$lib/stores';
+	import { networkConnectionData, deviceSize } from '$lib/stores';
+	import { onMount } from 'svelte';
+
+	const borderWidth = $deviceSize.size === '2xl' ? '0.85rem' : undefined;
+	const borderHeight = $deviceSize.size === '2xl' ? '0.85rem' : undefined;
 
 	let ethereumClient: undefined | EthereumClient;
 	let web3Modal: undefined | Web3Modal;
@@ -38,7 +42,6 @@
 	const setWalletStatusInStore = () => {
 		const correctNetwork = ethereumClient?.getNetwork().chain?.id === polygonMumbai.id;
 		const walletConnected = ethereumClient?.getAccount().isConnected ? true : false;
-
 		networkConnectionData.update((prev) => ({ ...prev, walletConnected, correctNetwork }));
 	};
 
@@ -50,22 +53,30 @@
 		}));
 	};
 
-	initializeWalletConnection();
+	onMount(() => {
+		initializeWalletConnection();
 
-	setWalletStatusInStore();
-
-	addWalletDataToStore();
-
-	ethereumClient?.watchNetwork(() => {
 		setWalletStatusInStore();
-	});
 
-	ethereumClient?.watchAccount(() => {
-		setWalletStatusInStore();
+		addWalletDataToStore();
+
+		ethereumClient?.watchNetwork(() => {
+			setWalletStatusInStore();
+		});
+
+		ethereumClient?.watchAccount(() => {
+			setWalletStatusInStore();
+		});
 	});
 </script>
 
 <div class="min-h-screen">
-	<Borders needOverflowSupport isFixed={true} applyZIndex={true} />
+	<Borders
+		needOverflowSupport
+		width={borderWidth}
+		height={borderHeight}
+		isFixed={true}
+		applyZIndex={true}
+	/>
 	<slot />
 </div>

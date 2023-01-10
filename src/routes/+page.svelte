@@ -51,27 +51,32 @@
 	};
 </script>
 
-<div class="px-8 pt-11">
-	<img class="m-auto w-32" src={Logo} alt="soul chat logo" />
+<div class="px-8 pt-11 xl:pt-[5.75rem] xl:mb-24">
+	<img class="m-auto w-32 xl:w-48" src={Logo} alt="soul chat logo" />
 </div>
-<blockquote class="px-12 mt-8 pb-[0.8em] font-semibold tracking-[0.18em] break-all">
-	“ Man suffers only because he takes seriously what the gods made for fun. ”
+<blockquote
+	class="px-12 xl:px-28 mt-8 xl:mt-16 xl:m-auto xl:text-2xl xl:w-[54rem] pb-[0.8em] font-semibold tracking-[0.18em] break-all"
+>
+	<!-- “ Man suffers only because he takes seriously what the gods made for fun. ” -->
+	“ Lorem ipsum dolor sit amet consectetur adipisicing elit. Laboriosam, dd dd ”
 </blockquote>
-<p class="px-12 tracking-[0.18em] font-normal text-right">- Alan Watts</p>
-<p class="px-12 mt-20 font-semibold tracking-[0.195em] hover:cursor-pointer">
+<p class="px-12 xl:px-28 tracking-[0.18em] xl:m-auto xl:w-[54rem] font-normal text-right">
+	- Alan Watts
+</p>
+<p class="px-12 xl:px-28 mt-20 xl:text-lg font-semibold tracking-[0.195em] hover:cursor-pointer">
 	<span class="underline">How this works</span>?
 </p>
-<div class="px-12 mt-8">
+<div class="px-12 xl:px-28 mt-8 xl:mt-16">
 	<div
-		class="py-3 px-2 max-w-[13rem] font-semibold border-[3px] border-solid border-[#797979] flex align-center"
+		class="py-3 px-2 max-w-[13rem] xl:text-lg xl:tracking-[2px] xl:max-w-[17rem] font-semibold border-[3px] border-solid border-[#797979] flex items-center align-center"
 	>
-		Souls Earned &nbsp;:&nbsp; 20 <img class="inline ml-4" src={SoulTkn} alt="Soul Token" />
+		Souls Earned &nbsp;:&nbsp; 20 <img class="inline ml-4 xl:w-8" src={SoulTkn} alt="Soul Token" />
 	</div>
 </div>
-<div class="px-12 mt-8">
-	<p class="font-semibold">Interests :</p>
+<div class="px-12 xl:px-28 mt-8 xl:mt-16">
+	<p class="font-semibold xl:text-xl tracking-[2px]">Interests :</p>
 	<div
-		class="mt-4 relative h-[57.6px]"
+		class="mt-4 relative h-[57.6px] xl:h-[72px] xl:max-w-[30rem]"
 		style="box-shadow: inset 2px 2px 3px 2px rgba(0, 0, 0, 0.25)"
 	>
 		<Borders
@@ -105,18 +110,18 @@
 		</div>
 	</div>
 </div>
-<div class="px-12 mt-14 ml-[1px] flex items-center gap-2">
+<div class="px-12 xl:px-28 mt-14 ml-[1px] flex items-center gap-2 xl:gap-4">
 	<input
-		class="cursor-pointer accent-[#424242] hover:accent-[#424242] outline-none aspect-square w-[0.9rem]"
+		class="cursor-pointer accent-[#424242] hover:accent-[#424242] outline-none aspect-square w-[0.9rem] xl:w-[1.1rem]"
 		type="checkbox"
 		id="soulReaper"
 		bind:checked={connectWithMostSoulful}
 	/>
-	<label for="soulReaper" class="cursor-pointer select-none text-sm">
+	<label for="soulReaper" class="cursor-pointer select-none text-sm xl:text-lg">
 		Connect with the most Soulful
 	</label>
 </div>
-<div class="px-12 mt-20 mb-12">
+<div class="px-12 xl:px-28 mt-20 mb-12">
 	<Button
 		on:click={() => {
 			if ($ntwrkData.walletConnected && $ntwrkData.correctNetwork) connectSoul();

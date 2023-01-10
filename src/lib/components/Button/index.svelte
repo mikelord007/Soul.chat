@@ -5,7 +5,7 @@
 	export let buttonContent: string;
 </script>
 
-<button on:click class={['px-6 py-4 m-auto block relative ', className].join('')}>
+<button on:click class={['px-6 py-4 m-auto block relative xl:text-xl', className].join('')}>
 	<Borders width="0.2rem" height="0.2rem" />
 	{buttonContent}
 </button>
