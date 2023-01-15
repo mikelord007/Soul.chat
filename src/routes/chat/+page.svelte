@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Button from '$lib/components/Button/index.svelte';
 	import MediaBlock from './components/MediaBlock/index.svelte';
+	import ShowMutual from './components/ShowMutual/index.svelte';
 	import ioClient, { Socket } from 'socket.io-client';
 	import { onMount, onDestroy } from 'svelte';
 	import SimplePeer from 'simple-peer/simplepeer.min.js';
@@ -106,8 +107,11 @@
 	};
 </script>
 
-<div class="flex flex-col px-6 mt-8 gap-4" id="vid">
+<ShowMutual className="px-6 xl:px-14 mt-8" />
+<div class="flex flex-col xl:flex-row xl:justify-between px-6 xl:px-14 mt-8 xl:mt-12 gap-4">
 	<MediaBlock bind:videoElem={otherVideoElem} />
-	<MediaBlock bind:videoElem={ownVideoElem} />
+	<MediaBlock ownVid bind:videoElem={ownVideoElem} />
 </div>
-<Button on:click={skipSoul} className="my-8 w-40 tracking-[2px]" {buttonContent} />
+<Button on:click={skipSoul} className="my-8 xl:my-12 w-40 tracking-[2px]">
+	{buttonContent}
+</Button>

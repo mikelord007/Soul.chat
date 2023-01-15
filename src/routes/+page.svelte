@@ -128,12 +128,13 @@
 			else if ($ntwrkData.walletConnected) switchNetwork();
 			else connectWallet();
 		}}
-		buttonContent={$ntwrkData.walletConnected
+	>
+		{$ntwrkData.walletConnected
 			? $ntwrkData.correctNetwork
 				? 'Connect with a Soul'
 				: 'Change Network'
 			: 'Connect Your Wallet'}
-	/>
+	</Button>
 </div>
 
 <style>

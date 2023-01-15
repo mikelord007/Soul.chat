@@ -70,7 +70,7 @@
 	});
 </script>
 
-<div class="min-h-screen">
+<div>
 	<Borders
 		needOverflowSupport
 		width={borderWidth}
