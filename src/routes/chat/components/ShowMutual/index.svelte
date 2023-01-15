@@ -1,6 +1,9 @@
 <script lang="ts">
 	import Borders from '$lib/components/Borders/index.svelte';
-	export let mutualInterests = ['talk', 'life', 'life', 'life', 'life'];
+	export let findingSoul = true;
+	$: mutualInterests = findingSoul
+		? ['finding A Soul...']
+		: ['talk', 'life', 'life', 'life', 'life'];
 	export let className: string;
 </script>
 
@@ -8,7 +11,7 @@
 	<div
 		class="mt-4 p-4 xl:py-8 flex items-center gap-4 relative h-[57.6px] xl:h-[72px] xl:max-w-[30rem] border-[3px] border-solid border-[#797979]"
 	>
-		<span>Mutual</span>
+		<span>Mutual:</span>
 		<div class="relative">
 			<Borders
 				needOverflowSupport

@@ -7,8 +7,8 @@
 	import SimplePeer from 'simple-peer/simplepeer.min.js';
 	import type { SoulParams } from './interfaces';
 
-	let affirm = 0;
-	let buttonContent = 'Skip Soul';
+	let affirmToSkipSoul = 0;
+	$: skipButtonContent = affirmToSkipSoul ? 'Affirm?' : 'Skip Soul';
 	let io: Socket | null;
 	let peer: SimplePeer | undefined;
 	let stream: MediaStream | undefined;
@@ -17,6 +17,7 @@
 	let ownSoulParams: SoulParams;
 	let otherSoulParams: SoulParams;
 	let otherSoulId = '';
+	let findingSoul = true;
 
 	const playOwnMedia = async () => {
 		stream = await navigator.mediaDevices.getUserMedia({
@@ -36,12 +37,17 @@
 		ownSoulParams = tempParams;
 	};
 
-	const InitializeSocketListeners = (io: Socket) => {
+	const initializeSocket = () => {
+		io = ioClient('http://localhost:5000');
+		io.emit('interests', ownSoulParams);
+	};
+
+	const initializeSocketListeners = (io: Socket) => {
 		io.on('initiateWebRTC', (otherSoulParams_, otherSoulSocketId) => {
 			peer = new SimplePeer({ initiator: true, stream: stream });
 			otherSoulParams = otherSoulParams_;
 			otherSoulId = otherSoulSocketId;
-
+			console.log('initiator');
 			peer?.on('signal', (data) => {
 				io?.emit('passingPeerData', data, ownSoulParams, otherSoulId);
 			});
@@ -54,6 +60,7 @@
 				}
 
 				otherVideoElem.play();
+				findingSoul = false;
 			});
 		});
 
@@ -61,7 +68,8 @@
 			peer = new SimplePeer({ stream: stream });
 			peer.signal(peerData);
 			otherSoulParams = otherSoulParams_;
-
+			otherSoulId = otherSoulSocketId;
+			console.log('matchmade');
 			peer.on('signal', (data) => {
 				io?.emit('rePassingPeerData', data, otherSoulSocketId);
 			});
@@ -74,11 +82,19 @@
 				}
 
 				otherVideoElem.play();
+				findingSoul = false;
 			});
 		});
 
 		io.on('rePassedStreamData', (peerData) => {
 			peer?.signal(peerData);
+			// io.disconnect();
+		});
+
+		io.on('soulSkipped', () => {
+			peer?.destroy();
+			io?.disconnect();
+			findNextSoul();
 		});
 	};
 
@@ -87,31 +103,42 @@
 
 		parseSoulParams();
 
-		io = ioClient('http://localhost:5000');
-		io.emit('interests', ownSoulParams);
+		initializeSocket();
 
-		InitializeSocketListeners(io);
+		initializeSocketListeners(io);
 	});
 
 	onDestroy(() => {
 		io?.disconnect();
 	});
 
+	const findNextSoul = () => {
+		findingSoul = true;
+		affirmToSkipSoul = 0;
+
+		initializeSocket();
+		initializeSocketListeners(io);
+	};
+
 	const skipSoul = () => {
-		if (!affirm) {
-			affirm++;
-			buttonContent = 'Affirm?';
+		if (!affirmToSkipSoul) {
+			affirmToSkipSoul++;
 			return;
 		}
-		// do sth
+
+		io?.emit('skipSoul', otherSoulId, () => {
+			peer?.destroy();
+			// io?.disconnect();
+			findNextSoul();
+		});
 	};
 </script>
 
-<ShowMutual className="px-6 xl:px-14 mt-8" />
-<div class="flex flex-col xl:flex-row xl:justify-between px-6 xl:px-14 mt-8 xl:mt-12 gap-4">
-	<MediaBlock bind:videoElem={otherVideoElem} />
+<ShowMutual {findingSoul} className="px-6 xl:px-14 mt-8" />
+<div class="flex flex-col xl:flex-row xl:justify-between px-6 xl:px-14 mt-8 xl:mt-16 gap-4">
+	<MediaBlock {findingSoul} bind:videoElem={otherVideoElem} />
 	<MediaBlock ownVid bind:videoElem={ownVideoElem} />
 </div>
-<Button on:click={skipSoul} className="my-8 xl:my-12 w-40 tracking-[2px]">
-	{buttonContent}
+<Button disabled={findingSoul} on:click={skipSoul} className="my-8 xl:my-16 w-40 tracking-[2px]">
+	{skipButtonContent}
 </Button>

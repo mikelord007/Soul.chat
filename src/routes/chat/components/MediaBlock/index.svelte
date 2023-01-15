@@ -8,6 +8,7 @@
 	export let videoElem;
 	export let soulsEarned = 20;
 	export let ownVid = false;
+	export let findingSoul = ownVid ? false : true;
 	const borderWidth = $deviceSize.size === '2xl' ? '7px' : '5px';
 	const borderHeight = $deviceSize.size === '2xl' ? '7px' : '5px';
 </script>
@@ -27,7 +28,7 @@
 				{/each}
 			</button>
 			<div class="xl:text-lg overflow-hidden text-ellipsis whitespace-nowrap w-40">
-				lordmike007.eth
+				{ownVid ? 'lordmike007.eth' : findingSoul ? 'finding A Soul...' : 'otherPerson.eth'}
 			</div>
 		</div>
 		<button class="rounded-full xl:hidden" style="box-shadow: 0.7px 0.7px 0px 1px black;">
@@ -39,31 +40,43 @@
 		<img src={SoulTkn} class="w-[1.8rem] aspect-square" alt="" />
 	</div>
 	<div
-		class="py-4 pb-0 xl:py-0 xl:my-8 h-full xl:h-auto xl:border-[5px] xl:border-solid xl:border-[#797979]"
+		class="py-4 pb-0 xl:py-0 xl:my-8 h-full xl:h-auto xl:border-[5px] xl:border-solid xl:border-[#797979] relative"
 	>
 		<!-- svelte-ignore a11y-media-has-caption -->
+		{#if findingSoul}
+			<div class="flex flex-col justify-center items-center absolute inset-0 z-10 gap-4">
+				<span>finding A Soul...</span>
+				<div
+					class="relative px-1 border-[4px] border-[#4f4f4f] border-solid w-[16rem] h-10 flex flex-row justify-start gap-1 items-center"
+				>
+					{#each Array(6) as _}
+						<div class="h-6 w-3 bg-[#4f4f4f]" />
+					{/each}
+				</div>
+			</div>
+		{/if}
 		<video bind:this={videoElem} class="w-[5rem] xl:w-full h-[3rem] xl:h-[24.3rem] bg-black" />
 	</div>
 	<div class="hidden xl:flex flex-row items-center justify-between">
-		<Button disabled={ownVid} className="flex flex-row w-48 gap-4 justify-center items-center">
-			{#if ownVid}
-				<div class="absolute inset-0 opacity-60 bg-[#4c4c4c]" />
-			{/if}
+		<Button
+			disabled={ownVid || findingSoul}
+			className="flex flex-row w-48 gap-4 justify-center items-center"
+		>
 			Reap Soul:
 			<img
-				style={ownVid ? '' : 'box-shadow: 0.7px 0.7px 0px 1px black;'}
+				style={ownVid || findingSoul ? '' : 'box-shadow: 0.7px 0.7px 0px 1px black;'}
 				class="w-8 rounded-full"
 				src={ReapSoul}
 				alt=""
 			/>
 		</Button>
-		<Button disabled={ownVid} className="flex flex-row w-48 gap-4 justify-center items-center">
-			{#if ownVid}
-				<div class="absolute inset-0 opacity-60 bg-[#4c4c4c]" />
-			{/if}
+		<Button
+			disabled={ownVid || findingSoul}
+			className="flex flex-row w-48 gap-4 justify-center items-center"
+		>
 			Gift Soul:
 			<img
-				style={ownVid ? '' : 'box-shadow: 0.7px 0.7px 0px 1px black;'}
+				style={ownVid || findingSoul ? '' : 'box-shadow: 0.7px 0.7px 0px 1px black;'}
 				class="w-8 rounded-full"
 				src={SoulTkn}
 				alt=""
