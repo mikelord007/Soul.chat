@@ -3,14 +3,16 @@
 	import SoulTkn from '$lib/assets/images/icons/soultkn.svg';
 	import ReapSoul from '$lib/assets/images/icons/reapSoul.svg';
 	import Button from '$lib/components/Button/index.svelte';
+	import SoulInfoModal from '../SoulInfoModal/index.svelte';
 	import { deviceSize } from '$lib/stores';
 
 	export let videoElem;
 	export let soulsEarned = 20;
-	export let ownVid = false;
+	export let ownVid = true;
 	export let findingSoul = ownVid ? false : true;
 	const borderWidth = $deviceSize.size === '2xl' ? '7px' : '5px';
 	const borderHeight = $deviceSize.size === '2xl' ? '7px' : '5px';
+	let toggleInfoModal = false;
 </script>
 
 <div
@@ -24,6 +26,8 @@
 					<div
 						class="h-[2px] w-[20px] bg-[#ACACAC]"
 						style="box-shadow: 0.3px 0.7px 0px 0.5px black;"
+						on:click={() => (toggleInfoModal = !toggleInfoModal)}
+						on:keypress={() => (toggleInfoModal = !toggleInfoModal)}
 					/>
 				{/each}
 			</button>
@@ -47,15 +51,15 @@
 			<div class="flex flex-col justify-center items-center absolute inset-0 z-10 gap-4">
 				<span>finding A Soul...</span>
 				<div
-					class="relative px-1 border-[4px] border-[#4f4f4f] border-solid w-[16rem] h-10 flex flex-row justify-start gap-1 items-center"
+					class="relative px-1 border-[3px] xl:border-[4px] border-[#4f4f4f] border-solid w-40 xl:w-[16rem] h-8 xl:h-10 flex flex-row justify-start gap-1 items-center"
 				>
 					{#each Array(6) as _}
-						<div class="h-6 w-3 bg-[#4f4f4f]" />
+						<div class="h-[1.2rem] xl:h-6 w-[0.55rem] xl:w-3 bg-[#4f4f4f]" />
 					{/each}
 				</div>
 			</div>
 		{/if}
-		<video bind:this={videoElem} class="w-[5rem] xl:w-full h-[3rem] xl:h-[24.3rem] bg-black" />
+		<video bind:this={videoElem} class="w-full xl:w-full h-full xl:h-[24.3rem] bg-black" />
 	</div>
 	<div class="hidden xl:flex flex-row items-center justify-between">
 		<Button
@@ -84,6 +88,7 @@
 		</Button>
 	</div>
 </div>
+<SoulInfoModal {ownVid} {findingSoul} bind:toggleInfoModal />
 
 <style>
 	video {

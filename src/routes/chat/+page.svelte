@@ -50,10 +50,19 @@
 		ownSoulParams = tempParams;
 	};
 
+	const makeMeFreeIfImStillLonely = () => {
+		if (ownSoulParams.interests.length > 0)
+			setTimeout(() => {
+				console.log("you're still lonely");
+				if (findingSoul) io?.emit('makeMeFreeSoul', ownSoulParams);
+			}, 12000);
+	};
+
 	const initializeSocket = () => {
 		if (!io) io = ioClient('http://localhost:5000');
 
 		io.emit('interests', ownSoulParams);
+		makeMeFreeIfImStillLonely();
 	};
 
 	const initializeSocketListeners = (io: Socket) => {
@@ -177,6 +186,8 @@
 			peer?.destroy();
 			findNextSoul();
 		});
+
+		makeMeFreeIfImStillLonely();
 	};
 </script>
 
