@@ -1,9 +1,6 @@
 <script lang="ts">
 	import Borders from '$lib/components/Borders/index.svelte';
-	export let findingSoul = true;
-	$: mutualInterests = findingSoul
-		? ['finding A Soul...']
-		: ['talk', 'life', 'life', 'life', 'life'];
+	export let mutualInterests: Array<string>;
 	export let className: string;
 </script>
 

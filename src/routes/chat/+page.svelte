@@ -18,6 +18,19 @@
 	let otherSoulParams: SoulParams;
 	let otherSoulId = '';
 	let findingSoul = true;
+	let mutualInterests: Array<string>;
+	$: {
+		if (findingSoul) {
+			mutualInterests = ['finding a soul...'];
+		} else {
+			mutualInterests = [];
+			ownSoulParams.interests.forEach((ownInterest) => {
+				if (otherSoulParams.interests.includes(ownInterest)) {
+					mutualInterests.push(ownInterest);
+				}
+			});
+		}
+	}
 
 	const playOwnMedia = async () => {
 		stream = await navigator.mediaDevices.getUserMedia({
@@ -38,7 +51,8 @@
 	};
 
 	const initializeSocket = () => {
-		io = ioClient('http://localhost:5000');
+		if (!io) io = ioClient('http://localhost:5000');
+
 		io.emit('interests', ownSoulParams);
 	};
 
@@ -48,6 +62,7 @@
 			otherSoulParams = otherSoulParams_;
 			otherSoulId = otherSoulSocketId;
 			console.log('initiator');
+
 			peer?.on('signal', (data) => {
 				io?.emit('passingPeerData', data, ownSoulParams, otherSoulId);
 			});
@@ -62,6 +77,20 @@
 				otherVideoElem.play();
 				findingSoul = false;
 			});
+
+			peer?.on('close', () => {
+				io?.emit('skipSoul', otherSoulId, () => {
+					peer?.destroy();
+					findNextSoul();
+				});
+			});
+
+			peer?.on('error', () => {
+				io?.emit('skipSoul', otherSoulId, () => {
+					peer?.destroy();
+					findNextSoul();
+				});
+			});
 		});
 
 		io.on('matchMadeWithRemoteWebRTC', (peerData, otherSoulParams_, otherSoulSocketId) => {
@@ -70,7 +99,9 @@
 			otherSoulParams = otherSoulParams_;
 			otherSoulId = otherSoulSocketId;
 			console.log('matchmade');
+
 			peer.on('signal', (data) => {
+				console.log('repassing it');
 				io?.emit('rePassingPeerData', data, otherSoulSocketId);
 			});
 
@@ -84,16 +115,29 @@
 				otherVideoElem.play();
 				findingSoul = false;
 			});
+
+			peer?.on('close', () => {
+				io?.emit('skipSoul', otherSoulId, () => {
+					peer?.destroy();
+					findNextSoul();
+				});
+			});
+
+			peer?.on('error', () => {
+				io?.emit('skipSoul', otherSoulId, () => {
+					peer?.destroy();
+					findNextSoul();
+				});
+			});
 		});
 
 		io.on('rePassedStreamData', (peerData) => {
+			console.log('got repassed data');
 			peer?.signal(peerData);
-			// io.disconnect();
 		});
 
 		io.on('soulSkipped', () => {
 			peer?.destroy();
-			io?.disconnect();
 			findNextSoul();
 		});
 	};
@@ -109,6 +153,7 @@
 	});
 
 	onDestroy(() => {
+		skipSoul();
 		io?.disconnect();
 	});
 
@@ -117,7 +162,6 @@
 		affirmToSkipSoul = 0;
 
 		initializeSocket();
-		initializeSocketListeners(io);
 	};
 
 	const skipSoul = () => {
@@ -128,13 +172,12 @@
 
 		io?.emit('skipSoul', otherSoulId, () => {
 			peer?.destroy();
-			// io?.disconnect();
 			findNextSoul();
 		});
 	};
 </script>
 
-<ShowMutual {findingSoul} className="px-6 xl:px-14 mt-8" />
+<ShowMutual {mutualInterests} className="px-6 xl:px-14 mt-8" />
 <div class="flex flex-col xl:flex-row xl:justify-between px-6 xl:px-14 mt-8 xl:mt-16 gap-4">
 	<MediaBlock {findingSoul} bind:videoElem={otherVideoElem} />
 	<MediaBlock ownVid bind:videoElem={ownVideoElem} />
