@@ -153,8 +153,10 @@
 	});
 
 	onDestroy(() => {
-		skipSoul();
-		io?.disconnect();
+		io?.emit('skipSoul', otherSoulId, () => {
+			peer?.destroy();
+			io?.disconnect();
+		});
 	});
 
 	const findNextSoul = () => {
@@ -171,6 +173,7 @@
 		}
 
 		io?.emit('skipSoul', otherSoulId, () => {
+			console.log('skipping soul');
 			peer?.destroy();
 			findNextSoul();
 		});
