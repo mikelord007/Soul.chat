@@ -75,27 +75,27 @@
 		{/if}
 		<video bind:this={videoElem} class="w-full h-full lg:h-[24rem] xl:h-[26.3rem] bg-black" />
 	</div>
-	<div class="hidden md:flex flex-row items-center justify-between">
+	<div class="hidden md:flex gap-2 flex-row items-center justify-between">
 		<Button
 			disabled={ownVid || findingSoul}
-			className="flex flex-row w-[9.6rem] lg:w-48 py-2 lg:py-4 px-[0.6rem] lg:px-4 gap-4 justify-center items-center"
+			className="flex flex-row w-[9.6rem] lg:w-48 py-2 lg:py-4 px-[0.5rem] lg:px-4 gap-4 justify-center items-center"
 		>
 			Reap Soul:
 			<img
 				style={ownVid || findingSoul ? '' : 'box-shadow: 0.7px 0.7px 0px 1px black;'}
-				class="w-8 rounded-full"
+				class="w-[1.7rem] lg:w-8 rounded-full"
 				src={ReapSoul}
 				alt=""
 			/>
 		</Button>
 		<Button
 			disabled={ownVid || findingSoul}
-			className="flex flex-row w-[9.6rem] lg:w-48 py-2 lg:py-4 px-[0.6rem] lg:px-4 gap-4 justify-center items-center"
+			className="flex flex-row w-[9.6rem] lg:w-48 py-2 lg:py-4 px-[0.5rem] lg:px-4 gap-4 justify-center items-center"
 		>
 			Gift Soul:
 			<img
 				style={ownVid || findingSoul ? '' : 'box-shadow: 0.7px 0.7px 0px 1px black;'}
-				class="w-8 rounded-full"
+				class="w-[1.7rem] lg:w-8 rounded-full"
 				src={SoulTkn}
 				alt=""
 			/>
