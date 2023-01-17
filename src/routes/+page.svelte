@@ -94,6 +94,7 @@
 			width="0.2rem"
 			height="0.2rem"
 			darkBarOpacity="0.15"
+			outlineColor="#434343"
 			applyZIndex
 		/>
 		<div class="px-4 py-3 w-full h-full overflow-scroll flex gap-3 interestSection">

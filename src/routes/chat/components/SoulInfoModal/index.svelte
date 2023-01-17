@@ -24,7 +24,7 @@
 					toggleInfoModal = false;
 				}}
 			>
-				<Borders height="0.05rem" width="0.05rem" />
+				<Borders height="0.15rem" width="0.15rem" />
 				<img class="h-[1.15rem] w-[1.15rem]" src={Cross} alt="" />
 			</button>
 		</div>
