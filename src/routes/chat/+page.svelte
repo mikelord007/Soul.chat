@@ -191,8 +191,10 @@
 	};
 </script>
 
-<ShowMutual {mutualInterests} className="px-6 xl:px-14 mt-8" />
-<div class="flex flex-col xl:flex-row xl:justify-between px-6 xl:px-14 mt-8 xl:mt-16 gap-4">
+<ShowMutual {mutualInterests} className="px-6 md:px-10 xl:px-14 mt-8 md:mt-10" />
+<div
+	class="flex flex-col md:flex-row md:justify-between px-6 md:px-10 xl:px-14 mt-8 xl:mt-16 gap-6"
+>
 	<MediaBlock {findingSoul} bind:videoElem={otherVideoElem} />
 	<MediaBlock ownVid bind:videoElem={ownVideoElem} />
 </div>

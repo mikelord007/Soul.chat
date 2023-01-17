@@ -6,7 +6,7 @@
 
 <div class={className}>
 	<div
-		class="mt-4 p-4 xl:py-8 flex items-center gap-4 relative h-[57.6px] xl:h-[72px] xl:max-w-[30rem] border-[3px] border-solid border-[#797979]"
+		class="m-auto md:ml-0 md:mr-auto mt-4 p-4 xl:py-8 flex items-center gap-4 relative h-[57.6px] xl:h-[72px] max-w-[23rem] xl:max-w-[30rem] border-[3px] border-solid border-[#797979]"
 	>
 		<span>Mutual:</span>
 		<div class="relative">

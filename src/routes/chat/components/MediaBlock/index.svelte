@@ -4,30 +4,33 @@
 	import ReapSoul from '$lib/assets/images/icons/reapSoul.svg';
 	import Button from '$lib/components/Button/index.svelte';
 	import SoulInfoModal from '../SoulInfoModal/index.svelte';
+	import GiftSoulModal from '../GiftSoulModal/index.svelte';
 	import { deviceSize } from '$lib/stores';
 
 	export let videoElem;
 	export let soulsEarned = 20;
-	export let ownVid = true;
+	export let ownVid = false;
 	export let findingSoul = ownVid ? false : true;
 	const borderWidth = $deviceSize.size === '2xl' ? '7px' : '5px';
 	const borderHeight = $deviceSize.size === '2xl' ? '7px' : '5px';
 	let toggleInfoModal = false;
+	let toggleGiftModal = false;
 </script>
 
 <div
-	class="flex flex-col w-full xl:w-[41rem] min-w-[280px] aspect-[280/300] xl:aspect-[280/215] relative m-auto xl:m-0 p-6 xl:p-[2.3rem]"
+	class="flex flex-col w-full xl:w-[41rem] max-w-[23rem] md:max-w-[33rem] lg:max-w-[40rem] md:max-w-auto min-w-[280px] aspect-[280/300] xl:aspect-[280/215] relative m-auto md:m-0 p-[1.1rem] md:p-6 xl:p-[2.3rem]"
 >
 	<Borders width={borderWidth} height={borderHeight} />
-	<div class="flex items-center justify-between">
+	<div class="flex items-center justify-between h-8 xl:h-auto">
 		<div class="flex items-center gap-4">
-			<button class="flex flex-col gap-[3px] xl:hidden">
+			<button
+				class="flex flex-col gap-[3px] lg:hidden"
+				on:click={() => (toggleInfoModal = !toggleInfoModal)}
+			>
 				{#each Array(4) as _}
 					<div
 						class="h-[2px] w-[20px] bg-[#ACACAC]"
 						style="box-shadow: 0.3px 0.7px 0px 0.5px black;"
-						on:click={() => (toggleInfoModal = !toggleInfoModal)}
-						on:keypress={() => (toggleInfoModal = !toggleInfoModal)}
 					/>
 				{/each}
 			</button>
@@ -35,16 +38,27 @@
 				{ownVid ? 'lordmike007.eth' : findingSoul ? 'finding A Soul...' : 'otherPerson.eth'}
 			</div>
 		</div>
-		<button class="rounded-full xl:hidden" style="box-shadow: 0.7px 0.7px 0px 1px black;">
+		<button
+			class="rounded-full xl:hidden"
+			style={`${
+				ownVid
+					? 'display: none;'
+					: findingSoul
+					? 'opacity: 0.5;'
+					: 'box-shadow: 0.7px 0.7px 0px 1px black;'
+			}`}
+			on:click={() => (toggleGiftModal = !toggleGiftModal)}
+			disabled={findingSoul || ownVid}
+		>
 			<img src={SoulTkn} class="w-8 aspect-square" alt="" />
 		</button>
 	</div>
-	<div class="hidden xl:flex items-center justify-between w-[11rem] mt-4">
+	<div class="hidden lg:flex items-center justify-between w-[11rem] mt-4">
 		<span>Souls Earned: &nbsp;&nbsp;&nbsp; {soulsEarned}</span>
 		<img src={SoulTkn} class="w-[1.8rem] aspect-square" alt="" />
 	</div>
 	<div
-		class="py-4 pb-0 xl:py-0 xl:my-8 h-full xl:h-auto xl:border-[5px] xl:border-solid xl:border-[#797979] relative"
+		class="py-4 pb-0 md:py-0 md:my-8 h-full lg:h-auto md:border-[3px] lg:border-[4px] xl:border-[5px] md:border-solid md:border-[#797979] relative"
 	>
 		<!-- svelte-ignore a11y-media-has-caption -->
 		{#if findingSoul}
@@ -59,12 +73,12 @@
 				</div>
 			</div>
 		{/if}
-		<video bind:this={videoElem} class="w-full xl:w-full h-full xl:h-[24.3rem] bg-black" />
+		<video bind:this={videoElem} class="w-full h-full lg:h-[24rem] xl:h-[26.3rem] bg-black" />
 	</div>
-	<div class="hidden xl:flex flex-row items-center justify-between">
+	<div class="hidden md:flex flex-row items-center justify-between">
 		<Button
 			disabled={ownVid || findingSoul}
-			className="flex flex-row w-48 gap-4 justify-center items-center"
+			className="flex flex-row w-[9.6rem] lg:w-48 py-2 lg:py-4 px-[0.6rem] lg:px-4 gap-4 justify-center items-center"
 		>
 			Reap Soul:
 			<img
@@ -76,7 +90,7 @@
 		</Button>
 		<Button
 			disabled={ownVid || findingSoul}
-			className="flex flex-row w-48 gap-4 justify-center items-center"
+			className="flex flex-row w-[9.6rem] lg:w-48 py-2 lg:py-4 px-[0.6rem] lg:px-4 gap-4 justify-center items-center"
 		>
 			Gift Soul:
 			<img
@@ -89,6 +103,7 @@
 	</div>
 </div>
 <SoulInfoModal {ownVid} {findingSoul} bind:toggleInfoModal />
+<GiftSoulModal {ownVid} {findingSoul} bind:toggleGiftModal />
 
 <style>
 	video {

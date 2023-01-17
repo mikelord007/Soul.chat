@@ -4,6 +4,7 @@
 	import Cross from '$lib/assets/images/icons/cross.svg';
 	import Borders from '$lib/components/Borders/index.svelte';
 	import Button from '$lib/components/Button/index.svelte';
+	import InfoModal from './components/InfoModal/index.svelte';
 	import { polygonMumbai } from '@wagmi/core/chains';
 	import { goto } from '$app/navigation';
 	import { networkConnectionData as ntwrkData } from '$lib/stores';
@@ -11,6 +12,7 @@
 	let inputValue: string = '';
 	let interests: Array<string> = [];
 	let connectWithMostSoulful: boolean = false;
+	let toggleInfoModal = false;
 
 	const removeInterest = (interest: string) => {
 		interests = interests.filter((elem) => elem !== interest);
@@ -51,32 +53,39 @@
 	};
 </script>
 
-<div class="px-8 pt-11 xl:pt-[5.75rem] xl:mb-24">
-	<img class="m-auto w-32 xl:w-48" src={Logo} alt="soul chat logo" />
+<div class="px-8 pt-11 md:pt-[3.5rem] xl:pt-[5.75rem] xl:mb-24">
+	<img class="m-auto w-32 md:w-40 xl:w-48" src={Logo} alt="soul chat logo" />
 </div>
 <blockquote
-	class="px-12 xl:px-28 mt-8 xl:mt-16 xl:m-auto xl:text-2xl xl:w-[54rem] pb-[0.8em] font-semibold tracking-[0.18em] break-all"
+	class="px-12 xl:px-28 mt-8 md:mt-12 xl:mt-16 m-auto md:text-xl xl:text-2xl xl:w-[50rem] max-w-[29rem] md:max-w-[36rem] xl:max-w-none pb-[0.8em] font-semibold tracking-[0.18em]"
 >
 	<!-- “ Man suffers only because he takes seriously what the gods made for fun. ” -->
-	“ Lorem ipsum dolor sit amet consectetur adipisicing elit. Laboriosam, dd dd ”
+	“ You need chaos in your soul to give birth to a dancing star ”
 </blockquote>
-<p class="px-12 xl:px-28 tracking-[0.18em] xl:m-auto xl:w-[54rem] font-normal text-right">
-	- Alan Watts
+<p
+	class="px-12 xl:px-28 xl:text-[17px] tracking-[0.1em] xl:tracking-[0.18em] m-auto xl:w-[50rem] max-w-[27rem] md:max-w-[36rem] xl:max-w-none font-normal text-right"
+>
+	- Friedrich Nietzsche
 </p>
 <p class="px-12 xl:px-28 mt-20 xl:text-lg font-semibold tracking-[0.195em] hover:cursor-pointer">
-	<span class="underline">How this works</span>?
+	<button
+		class="underline"
+		on:click={() => {
+			toggleInfoModal = !toggleInfoModal;
+		}}>How this works</button
+	>?
 </p>
-<div class="px-12 xl:px-28 mt-8 xl:mt-16">
+<div class="px-12 xl:px-28 mt-8 md:mt-12 xl:mt-16">
 	<div
 		class="py-3 px-2 max-w-[13rem] xl:text-lg xl:tracking-[2px] xl:max-w-[17rem] font-semibold border-[3px] border-solid border-[#797979] flex items-center align-center"
 	>
 		Souls Earned &nbsp;:&nbsp; 20 <img class="inline ml-4 xl:w-8" src={SoulTkn} alt="Soul Token" />
 	</div>
 </div>
-<div class="px-12 xl:px-28 mt-8 xl:mt-16">
+<div class="px-12 xl:px-28 mt-8 md:mt-12 xl:mt-16">
 	<p class="font-semibold xl:text-xl tracking-[2px]">Interests :</p>
 	<div
-		class="mt-4 relative h-[57.6px] xl:h-[72px] xl:max-w-[30rem]"
+		class="mt-4 relative h-[57.6px] xl:h-[72px] max-w-[30rem]"
 		style="box-shadow: inset 2px 2px 3px 2px rgba(0, 0, 0, 0.25)"
 	>
 		<Borders
@@ -117,7 +126,7 @@
 		id="soulReaper"
 		bind:checked={connectWithMostSoulful}
 	/>
-	<label for="soulReaper" class="cursor-pointer select-none text-sm xl:text-lg">
+	<label for="soulReaper" class="cursor-pointer select-none text-sm md:text-base xl:text-lg">
 		Connect with the most Soulful
 	</label>
 </div>
@@ -136,6 +145,7 @@
 			: 'Connect Your Wallet'}
 	</Button>
 </div>
+<InfoModal bind:toggleInfoModal />
 
 <style>
 	.interestSection::-webkit-scrollbar {
