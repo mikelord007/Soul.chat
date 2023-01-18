@@ -39,6 +39,7 @@
 		ethereumClient = new EthereumClient(wagmiClient, chains);
 
 		web3Modal = new Web3Modal({ projectId: '19fac367aa0adcaefbf87fcf1af1c140' }, ethereumClient);
+		web3Modal.setSelectedChain(polygonMumbai);
 
 		web3Modal.setTheme({
 			themeMode: 'dark',
@@ -56,18 +57,22 @@
 	const addWalletDataToStore = async () => {
 		myAddress = ethereumClient?.getAccount().address;
 
-		myENS = await fetchEnsName({
-			address: myAddress,
-			chainId: 1
-		});
+		if (myAddress) {
+			myENS = await fetchEnsName({
+				address: myAddress,
+				chainId: 1
+			});
 
-		const data: BigNumber = await readContract({
-			address: SOULTOKENADDRESS,
-			abi: SOULTOKENABI,
-			functionName: 'rewardCount',
-			args: [myAddress]
-		});
-		myRewards = data.toString();
+			const data: BigNumber = await readContract({
+				address: SOULTOKENADDRESS,
+				abi: SOULTOKENABI,
+				functionName: 'rewardCount',
+				args: [myAddress]
+			});
+			myRewards = data.toString();
+		}
+
+		console.log('web3modal: ', web3Modal);
 
 		networkConnectionData.update((prev) => ({
 			...prev,
@@ -93,10 +98,6 @@
 	onMount(() => {
 		initializeWalletConnection();
 
-		setWalletStatusInStore();
-
-		addWalletDataToStore();
-
 		ethereumClient?.watchNetwork(() => {
 			setWalletStatusInStore();
 			redirectIfNotAuthenticated();
@@ -104,10 +105,9 @@
 
 		ethereumClient?.watchAccount(() => {
 			setWalletStatusInStore();
+			addWalletDataToStore();
 			redirectIfNotAuthenticated();
 		});
-
-		console.log('etherclient: ', ethereumClient);
 	});
 </script>
 

@@ -42,10 +42,6 @@
 
 	const connectWallet = async () => {
 		await $ntwrkData.web3Modal?.openModal({ route: 'ConnectWallet' });
-
-		if ($ntwrkData.ethereumClient?.getNetwork().chain?.id !== polygonMumbai.id) {
-			$ntwrkData.ethereumClient?.switchNetwork({ chainId: polygonMumbai.id });
-		}
 	};
 
 	const switchNetwork = async () => {
