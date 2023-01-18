@@ -3,6 +3,8 @@
 	import Borders from '$lib/components/Borders/index.svelte';
 	import SoulTkn from '$lib/assets/images/icons/soultkn.svg';
 	import ReapSoul from '$lib/assets/images/icons/reapSoul.svg';
+	import GiftSoulModal from '../GiftSoulModal/index.svelte';
+	import ReapSoulModal from '../ReapSoulModal/index.svelte';
 	import Button from '$lib/components/Button/index.svelte';
 
 	export let soulIdentityValue: string;
@@ -10,6 +12,8 @@
 	export let ownVid = true;
 	export let findingSoul = true;
 	export let toggleInfoModal = false;
+	let toggleGiftModal = false;
+	let toggleReapModal = false;
 </script>
 
 {#if toggleInfoModal}
@@ -41,6 +45,9 @@
 				<Button
 					disabled={ownVid || findingSoul}
 					className="flex flex-row h-[3.2rem] w-48 text-[15px] gap-4 justify-center items-center"
+					on:click={() => {
+						toggleGiftModal = !toggleGiftModal;
+					}}
 				>
 					Gift Soul:
 					<img
@@ -53,6 +60,9 @@
 				<Button
 					disabled={ownVid || findingSoul}
 					className="flex flex-row h-[3.2rem] w-48 text-[15px] gap-4 justify-center items-center"
+					on:click={() => {
+						toggleReapModal = !toggleReapModal;
+					}}
 				>
 					Reap Soul:
 					<img
@@ -65,4 +75,18 @@
 			</div>
 		</div>
 	</div>
+	<GiftSoulModal
+		bind:toggleInfoModal
+		{soulIdentityValue}
+		{ownVid}
+		{findingSoul}
+		bind:toggleGiftModal
+	/>
+	<ReapSoulModal
+		bind:toggleInfoModal
+		{soulIdentityValue}
+		{ownVid}
+		{findingSoul}
+		bind:toggleReapModal
+	/>
 {/if}

@@ -5,6 +5,7 @@
 	import Button from '$lib/components/Button/index.svelte';
 	import SoulInfoModal from '../SoulInfoModal/index.svelte';
 	import GiftSoulModal from '../GiftSoulModal/index.svelte';
+	import ReapSoulModal from '../ReapSoulModal/index.svelte';
 	import { deviceSize } from '$lib/stores';
 
 	export let videoElem;
@@ -18,6 +19,7 @@
 	const borderHeight = $deviceSize.size === '2xl' ? '7px' : '5px';
 	let toggleInfoModal = false;
 	let toggleGiftModal = false;
+	let toggleReapModal = false;
 	$: soulIdentityValue = soulEns ? soulEns : soulAddress;
 </script>
 
@@ -83,6 +85,9 @@
 		<Button
 			disabled={ownVid || findingSoul}
 			className="flex flex-row w-[9.6rem] lg:w-48 py-2 lg:py-4 px-[0.5rem] lg:px-4 gap-4 justify-center items-center"
+			on:click={() => {
+				toggleReapModal = !toggleReapModal;
+			}}
 		>
 			Reap Soul:
 			<img
@@ -95,6 +100,9 @@
 		<Button
 			disabled={ownVid || findingSoul}
 			className="flex flex-row w-[9.6rem] lg:w-48 py-2 lg:py-4 px-[0.5rem] lg:px-4 gap-4 justify-center items-center"
+			on:click={() => {
+				toggleGiftModal = !toggleGiftModal;
+			}}
 		>
 			Gift Soul:
 			<img
@@ -108,6 +116,7 @@
 </div>
 <SoulInfoModal {soulIdentityValue} {soulsRewarded} {ownVid} {findingSoul} bind:toggleInfoModal />
 <GiftSoulModal {soulIdentityValue} {ownVid} {findingSoul} bind:toggleGiftModal />
+<ReapSoulModal {soulIdentityValue} {ownVid} {findingSoul} bind:toggleReapModal />
 
 <style>
 	video {
