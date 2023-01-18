@@ -4,6 +4,8 @@
 	import ShowMutual from './components/ShowMutual/index.svelte';
 	import ioClient, { Socket } from 'socket.io-client';
 	import { onMount, onDestroy } from 'svelte';
+	import { networkConnectionData } from '$lib/stores';
+	import { fetchEnsName } from '@wagmi/core';
 	import SimplePeer from 'simple-peer/simplepeer.min.js';
 	import type { SoulParams } from './interfaces';
 
@@ -17,6 +19,8 @@
 	let ownSoulParams: SoulParams;
 	let otherSoulParams: SoulParams;
 	let otherSoulId = '';
+	let otherSoulAddress: `0x${string}`;
+	let otherSoulENS: string;
 	let findingSoul = true;
 	let mutualInterests: Array<string>;
 	$: {
@@ -31,6 +35,13 @@
 			});
 		}
 	}
+
+	const fetchOtherSoulENS = async () => {
+		otherSoulENS = await fetchEnsName({
+			address: otherSoulAddress,
+			chainId: 1
+		});
+	};
 
 	const playOwnMedia = async () => {
 		stream = await navigator.mediaDevices.getUserMedia({
@@ -70,10 +81,16 @@
 			peer = new SimplePeer({ initiator: true, stream: stream });
 			otherSoulParams = otherSoulParams_;
 			otherSoulId = otherSoulSocketId;
-			console.log('initiator');
+			console.log('initiator', $networkConnectionData.myAddress);
 
 			peer?.on('signal', (data) => {
-				io?.emit('passingPeerData', data, ownSoulParams, otherSoulId);
+				io?.emit(
+					'passingPeerData',
+					data,
+					ownSoulParams,
+					otherSoulId,
+					$networkConnectionData.myAddress
+				);
 			});
 
 			peer?.on('stream', (stream: MediaStream) => {
@@ -102,46 +119,68 @@
 			});
 		});
 
-		io.on('matchMadeWithRemoteWebRTC', (peerData, otherSoulParams_, otherSoulSocketId) => {
-			peer = new SimplePeer({ stream: stream });
-			peer.signal(peerData);
-			otherSoulParams = otherSoulParams_;
-			otherSoulId = otherSoulSocketId;
-			console.log('matchmade');
+		io.on(
+			'matchMadeWithRemoteWebRTC',
+			(peerData, otherSoulParams_, otherSoulSocketId, otherSoulAddress_) => {
+				peer = new SimplePeer({ stream: stream });
+				peer.signal(peerData);
+				otherSoulParams = otherSoulParams_;
+				otherSoulId = otherSoulSocketId;
+				otherSoulAddress = otherSoulAddress_;
+				fetchOtherSoulENS();
 
-			peer.on('signal', (data) => {
-				console.log('repassing it');
-				io?.emit('rePassingPeerData', data, otherSoulSocketId);
-			});
+				console.log('matchmade', $networkConnectionData.myAddress);
 
-			peer?.on('stream', (stream: MediaStream) => {
-				if ('srcObject' in otherVideoElem) {
-					otherVideoElem.srcObject = stream;
-				} else {
-					otherVideoElem.src = window.URL.createObjectURL(stream); // for older browsers
-				}
+				peer.on('signal', (data) => {
+					let intvl = setInterval(() => {
+						if ($networkConnectionData.myAddress) {
+							io?.emit(
+								'rePassingPeerData',
+								data,
+								otherSoulSocketId,
+								$networkConnectionData.myAddress
+							);
+							console.log('repassing it');
+							clearInterval(intvl);
+						}
+					});
 
-				otherVideoElem.play();
-				findingSoul = false;
-			});
-
-			peer?.on('close', () => {
-				io?.emit('skipSoul', otherSoulId, () => {
-					peer?.destroy();
-					findNextSoul();
+					setTimeout(() => {
+						clearInterval(intvl);
+					}, 12000);
 				});
-			});
 
-			peer?.on('error', () => {
-				io?.emit('skipSoul', otherSoulId, () => {
-					peer?.destroy();
-					findNextSoul();
+				peer?.on('stream', (stream: MediaStream) => {
+					if ('srcObject' in otherVideoElem) {
+						otherVideoElem.srcObject = stream;
+					} else {
+						otherVideoElem.src = window.URL.createObjectURL(stream); // for older browsers
+					}
+
+					otherVideoElem.play();
+					findingSoul = false;
 				});
-			});
-		});
 
-		io.on('rePassedStreamData', (peerData) => {
-			console.log('got repassed data');
+				peer?.on('close', () => {
+					io?.emit('skipSoul', otherSoulId, () => {
+						peer?.destroy();
+						findNextSoul();
+					});
+				});
+
+				peer?.on('error', () => {
+					io?.emit('skipSoul', otherSoulId, () => {
+						peer?.destroy();
+						findNextSoul();
+					});
+				});
+			}
+		);
+
+		io.on('rePassedStreamData', (peerData, otherSoulAddress_) => {
+			console.log('got repassed data', otherSoulAddress_);
+			otherSoulAddress = otherSoulAddress_;
+			fetchOtherSoulENS();
 			peer?.signal(peerData);
 		});
 
@@ -195,8 +234,13 @@
 <div
 	class="flex flex-col md:flex-row md:justify-between px-6 md:px-10 xl:px-14 mt-8 xl:mt-16 gap-6"
 >
-	<MediaBlock {findingSoul} bind:videoElem={otherVideoElem} />
-	<MediaBlock ownVid bind:videoElem={ownVideoElem} />
+	<MediaBlock {otherSoulENS} {otherSoulAddress} {findingSoul} bind:videoElem={otherVideoElem} />
+	<MediaBlock
+		ownVid
+		ownSoulENS={$networkConnectionData.myENS}
+		ownSoulAddress={$networkConnectionData.myAddress}
+		bind:videoElem={ownVideoElem}
+	/>
 </div>
 <Button disabled={findingSoul} on:click={skipSoul} className="my-8 xl:my-16 w-40 tracking-[2px]">
 	{skipButtonContent}

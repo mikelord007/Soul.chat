@@ -2,6 +2,10 @@
 	import Borders from '$lib/components/Borders/index.svelte';
 	export let mutualInterests: Array<string>;
 	export let className: string;
+
+	$: if (mutualInterests.length < 1) {
+		mutualInterests = ['void'];
+	}
 </script>
 
 <div class={className}>

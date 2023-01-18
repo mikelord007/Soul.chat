@@ -1,19 +1,23 @@
 <script lang="ts">
 	import '../app.css';
 	import Borders from '$lib/components/Borders/index.svelte';
-	import { configureChains, createClient } from '@wagmi/core';
-	import { polygonMumbai } from '@wagmi/core/chains';
+	import { configureChains, createClient, fetchEnsName } from '@wagmi/core';
+	import { polygonMumbai, mainnet } from '@wagmi/core/chains';
 	import { Web3Modal } from '@web3modal/html';
 	import { EthereumClient, modalConnectors, walletConnectProvider } from '@web3modal/ethereum';
 	import { networkConnectionData, deviceSize } from '$lib/stores';
 	import { onMount } from 'svelte';
+	import { browser } from '$app/environment';
+	import { goto } from '$app/navigation';
 
 	const borderWidth = $deviceSize.size === '2xl' ? '0.85rem' : undefined;
 	const borderHeight = $deviceSize.size === '2xl' ? '0.85rem' : undefined;
 
 	let ethereumClient: undefined | EthereumClient;
 	let web3Modal: undefined | Web3Modal;
-	const chains = [polygonMumbai];
+	let myAddress: undefined | `0x${string}`;
+	let myENS: undefined | string;
+	const chains = [polygonMumbai, mainnet];
 
 	const initializeWalletConnection = () => {
 		// Wagmi Core Client
@@ -45,12 +49,32 @@
 		networkConnectionData.update((prev) => ({ ...prev, walletConnected, correctNetwork }));
 	};
 
-	const addWalletDataToStore = () => {
+	const addWalletDataToStore = async () => {
+		myAddress = ethereumClient?.getAccount().address;
+		console.log('my address in networkconctndata: ', $networkConnectionData.myAddress);
+		myENS = await fetchEnsName({
+			address: myAddress,
+			chainId: 1
+		});
+		console.log('my address: ', myAddress, 'my ENS: ', myENS);
 		networkConnectionData.update((prev) => ({
 			...prev,
 			ethereumClient,
-			web3Modal
+			web3Modal,
+			myAddress,
+			myENS
 		}));
+	};
+
+	const redirectIfNotAuthenticated = () => {
+		const correctNetwork = ethereumClient?.getNetwork().chain?.id === polygonMumbai.id;
+		const walletConnected = ethereumClient?.getAccount().isConnected ? true : false;
+
+		if (!correctNetwork || !walletConnected) {
+			if (browser && window.location.pathname !== '/') {
+				goto('/');
+			}
+		}
 	};
 
 	onMount(() => {
@@ -62,11 +86,15 @@
 
 		ethereumClient?.watchNetwork(() => {
 			setWalletStatusInStore();
+			redirectIfNotAuthenticated();
 		});
 
 		ethereumClient?.watchAccount(() => {
 			setWalletStatusInStore();
+			redirectIfNotAuthenticated();
 		});
+
+		console.log('etherclient: ', ethereumClient);
 	});
 </script>
 

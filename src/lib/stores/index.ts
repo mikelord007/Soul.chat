@@ -8,14 +8,18 @@ interface networkConnectionData {
     walletConnected: boolean,
     correctNetwork: boolean,
     ethereumClient: EthereumClient | undefined,
-    web3Modal: Web3Modal | undefined
+    web3Modal: Web3Modal | undefined,
+    myAddress: string | undefined,
+    myENS: string | undefined,
 }
 
 export const networkConnectionData : Writable<networkConnectionData> = writable({
     walletConnected: false,
 	correctNetwork: false,
     ethereumClient: undefined,
-    web3Modal: undefined
+    web3Modal: undefined,
+    myAddress: undefined,
+    myENS: undefined
 });
 
 export const deviceSize = readable({size: 'sm'},(set) => {

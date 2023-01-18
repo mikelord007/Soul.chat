@@ -11,10 +11,27 @@
 	export let soulsEarned = 20;
 	export let ownVid = false;
 	export let findingSoul = ownVid ? false : true;
+	export let otherSoulENS: string = '';
+	export let otherSoulAddress: string = '';
+	export let ownSoulENS: string = '';
+	export let ownSoulAddress: string = '';
+
 	const borderWidth = $deviceSize.size === '2xl' ? '7px' : '5px';
 	const borderHeight = $deviceSize.size === '2xl' ? '7px' : '5px';
 	let toggleInfoModal = false;
 	let toggleGiftModal = false;
+	let soulIdentityValue: string;
+
+	$: {
+		if (ownVid)
+			soulIdentityValue = ownSoulENS ? ownSoulENS : ownSoulAddress ? ownSoulAddress : 'loading...';
+		else
+			soulIdentityValue = otherSoulENS
+				? otherSoulENS
+				: otherSoulAddress
+				? otherSoulAddress
+				: 'loading...';
+	}
 </script>
 
 <div
@@ -35,7 +52,7 @@
 				{/each}
 			</button>
 			<div class="xl:text-lg overflow-hidden text-ellipsis whitespace-nowrap w-40">
-				{ownVid ? 'lordmike007.eth' : findingSoul ? 'finding A Soul...' : 'otherPerson.eth'}
+				{findingSoul ? 'finding a Soul...' : soulIdentityValue}
 			</div>
 		</div>
 		<button
