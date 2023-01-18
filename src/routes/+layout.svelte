@@ -1,7 +1,7 @@
 <script lang="ts">
 	import '../app.css';
 	import Borders from '$lib/components/Borders/index.svelte';
-	import { configureChains, createClient, fetchEnsName } from '@wagmi/core';
+	import { configureChains, createClient, fetchEnsName, readContract } from '@wagmi/core';
 	import { polygonMumbai, mainnet } from '@wagmi/core/chains';
 	import { Web3Modal } from '@web3modal/html';
 	import { EthereumClient, modalConnectors, walletConnectProvider } from '@web3modal/ethereum';
@@ -9,6 +9,9 @@
 	import { onMount } from 'svelte';
 	import { browser } from '$app/environment';
 	import { goto } from '$app/navigation';
+	import { SOULTOKENADDRESS } from '$lib/constants/index';
+	import { abi as SOULTOKENABI } from '$lib/constants/abi';
+	import type { BigNumber } from 'ethers';
 
 	const borderWidth = $deviceSize.size === '2xl' ? '0.85rem' : undefined;
 	const borderHeight = $deviceSize.size === '2xl' ? '0.85rem' : undefined;
@@ -17,6 +20,7 @@
 	let web3Modal: undefined | Web3Modal;
 	let myAddress: undefined | `0x${string}`;
 	let myENS: undefined | string;
+	let myRewards: undefined | string;
 	const chains = [polygonMumbai, mainnet];
 
 	const initializeWalletConnection = () => {
@@ -51,18 +55,27 @@
 
 	const addWalletDataToStore = async () => {
 		myAddress = ethereumClient?.getAccount().address;
-		console.log('my address in networkconctndata: ', $networkConnectionData.myAddress);
+
 		myENS = await fetchEnsName({
 			address: myAddress,
 			chainId: 1
 		});
-		console.log('my address: ', myAddress, 'my ENS: ', myENS);
+
+		const data: BigNumber = await readContract({
+			address: SOULTOKENADDRESS,
+			abi: SOULTOKENABI,
+			functionName: 'rewardCount',
+			args: [myAddress]
+		});
+		myRewards = data.toString();
+
 		networkConnectionData.update((prev) => ({
 			...prev,
 			ethereumClient,
 			web3Modal,
 			myAddress,
-			myENS
+			myENS,
+			myRewards
 		}));
 	};
 

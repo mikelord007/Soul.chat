@@ -8,30 +8,17 @@
 	import { deviceSize } from '$lib/stores';
 
 	export let videoElem;
-	export let soulsEarned = 20;
 	export let ownVid = false;
 	export let findingSoul = ownVid ? false : true;
-	export let otherSoulENS: string = '';
-	export let otherSoulAddress: string = '';
-	export let ownSoulENS: string = '';
-	export let ownSoulAddress: string = '';
+	export let soulEns: string = '';
+	export let soulAddress: string;
+	export let soulsRewarded: string;
 
 	const borderWidth = $deviceSize.size === '2xl' ? '7px' : '5px';
 	const borderHeight = $deviceSize.size === '2xl' ? '7px' : '5px';
 	let toggleInfoModal = false;
 	let toggleGiftModal = false;
-	let soulIdentityValue: string;
-
-	$: {
-		if (ownVid)
-			soulIdentityValue = ownSoulENS ? ownSoulENS : ownSoulAddress ? ownSoulAddress : 'loading...';
-		else
-			soulIdentityValue = otherSoulENS
-				? otherSoulENS
-				: otherSoulAddress
-				? otherSoulAddress
-				: 'loading...';
-	}
+	$: soulIdentityValue = soulEns ? soulEns : soulAddress;
 </script>
 
 <div
@@ -70,8 +57,8 @@
 			<img src={SoulTkn} class="w-8 aspect-square" alt="" />
 		</button>
 	</div>
-	<div class="hidden lg:flex items-center justify-between w-[11rem] mt-4">
-		<span>Souls Earned: &nbsp;&nbsp;&nbsp; {soulsEarned}</span>
+	<div class="hidden lg:flex items-center justify-start gap-3 mt-4">
+		<span>Souls Earned: &nbsp;&nbsp;&nbsp; {soulsRewarded}</span>
 		<img src={SoulTkn} class="w-[1.8rem] aspect-square" alt="" />
 	</div>
 	<div
@@ -119,8 +106,8 @@
 		</Button>
 	</div>
 </div>
-<SoulInfoModal {ownVid} {findingSoul} bind:toggleInfoModal />
-<GiftSoulModal {ownVid} {findingSoul} bind:toggleGiftModal />
+<SoulInfoModal {soulIdentityValue} {soulsRewarded} {ownVid} {findingSoul} bind:toggleInfoModal />
+<GiftSoulModal {soulIdentityValue} {ownVid} {findingSoul} bind:toggleGiftModal />
 
 <style>
 	video {

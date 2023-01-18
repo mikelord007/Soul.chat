@@ -5,9 +5,12 @@
 	import ioClient, { Socket } from 'socket.io-client';
 	import { onMount, onDestroy } from 'svelte';
 	import { networkConnectionData } from '$lib/stores';
-	import { fetchEnsName } from '@wagmi/core';
+	import { fetchEnsName, readContract } from '@wagmi/core';
 	import SimplePeer from 'simple-peer/simplepeer.min.js';
+	import type { BigNumber } from 'ethers';
 	import type { SoulParams } from './interfaces';
+	import { SOULTOKENADDRESS } from '$lib/constants/index';
+	import { abi as SOULTOKENABI } from '$lib/constants/abi';
 
 	let affirmToSkipSoul = 0;
 	$: skipButtonContent = affirmToSkipSoul ? 'Affirm?' : 'Skip Soul';
@@ -21,6 +24,7 @@
 	let otherSoulId = '';
 	let otherSoulAddress: `0x${string}`;
 	let otherSoulENS: string;
+	let otherSoulBalance: string;
 	let findingSoul = true;
 	let mutualInterests: Array<string>;
 	$: {
@@ -41,6 +45,16 @@
 			address: otherSoulAddress,
 			chainId: 1
 		});
+	};
+
+	const fetchOtherSoulBalance = async () => {
+		const data: BigNumber = await readContract({
+			address: SOULTOKENADDRESS,
+			abi: SOULTOKENABI,
+			functionName: 'rewardCount',
+			args: [otherSoulAddress]
+		});
+		otherSoulBalance = data.toString();
 	};
 
 	const playOwnMedia = async () => {
@@ -64,7 +78,6 @@
 	const makeMeFreeIfImStillLonely = () => {
 		if (ownSoulParams.interests.length > 0)
 			setTimeout(() => {
-				console.log("you're still lonely");
 				if (findingSoul) io?.emit('makeMeFreeSoul', ownSoulParams);
 			}, 12000);
 	};
@@ -81,9 +94,9 @@
 			peer = new SimplePeer({ initiator: true, stream: stream });
 			otherSoulParams = otherSoulParams_;
 			otherSoulId = otherSoulSocketId;
-			console.log('initiator', $networkConnectionData.myAddress);
 
 			peer?.on('signal', (data) => {
+				console.log('1 initiator on signal');
 				io?.emit(
 					'passingPeerData',
 					data,
@@ -100,8 +113,8 @@
 					otherVideoElem.src = window.URL.createObjectURL(stream); // for older browsers
 				}
 
-				otherVideoElem.play();
 				findingSoul = false;
+				otherVideoElem.play();
 			});
 
 			peer?.on('close', () => {
@@ -124,14 +137,15 @@
 			(peerData, otherSoulParams_, otherSoulSocketId, otherSoulAddress_) => {
 				peer = new SimplePeer({ stream: stream });
 				peer.signal(peerData);
+				console.log('2 matcher signalling initiator');
 				otherSoulParams = otherSoulParams_;
 				otherSoulId = otherSoulSocketId;
 				otherSoulAddress = otherSoulAddress_;
 				fetchOtherSoulENS();
-
-				console.log('matchmade', $networkConnectionData.myAddress);
+				fetchOtherSoulBalance();
 
 				peer.on('signal', (data) => {
+					console.log('3 matcher on signal');
 					let intvl = setInterval(() => {
 						if ($networkConnectionData.myAddress) {
 							io?.emit(
@@ -140,7 +154,6 @@
 								otherSoulSocketId,
 								$networkConnectionData.myAddress
 							);
-							console.log('repassing it');
 							clearInterval(intvl);
 						}
 					});
@@ -178,10 +191,10 @@
 		);
 
 		io.on('rePassedStreamData', (peerData, otherSoulAddress_) => {
-			console.log('got repassed data', otherSoulAddress_);
 			otherSoulAddress = otherSoulAddress_;
 			fetchOtherSoulENS();
 			peer?.signal(peerData);
+			console.log('4 initiator signalling matcher');
 		});
 
 		io.on('soulSkipped', () => {
@@ -221,7 +234,6 @@
 		}
 
 		io?.emit('skipSoul', otherSoulId, () => {
-			console.log('skipping soul');
 			peer?.destroy();
 			findNextSoul();
 		});
@@ -234,11 +246,18 @@
 <div
 	class="flex flex-col md:flex-row md:justify-between px-6 md:px-10 xl:px-14 mt-8 xl:mt-16 gap-6"
 >
-	<MediaBlock {otherSoulENS} {otherSoulAddress} {findingSoul} bind:videoElem={otherVideoElem} />
+	<MediaBlock
+		soulEns={otherSoulENS}
+		soulsRewarded={otherSoulBalance || 'loading...'}
+		soulAddress={otherSoulAddress || 'loading...'}
+		{findingSoul}
+		bind:videoElem={otherVideoElem}
+	/>
 	<MediaBlock
 		ownVid
-		ownSoulENS={$networkConnectionData.myENS}
-		ownSoulAddress={$networkConnectionData.myAddress}
+		soulEns={$networkConnectionData.myENS}
+		soulsRewarded={$networkConnectionData.myRewards || 'loading...'}
+		soulAddress={$networkConnectionData.myAddress || 'loading...'}
 		bind:videoElem={ownVideoElem}
 	/>
 </div>

@@ -11,6 +11,7 @@ interface networkConnectionData {
     web3Modal: Web3Modal | undefined,
     myAddress: string | undefined,
     myENS: string | undefined,
+    myRewards: string | undefined
 }
 
 export const networkConnectionData : Writable<networkConnectionData> = writable({
@@ -19,7 +20,8 @@ export const networkConnectionData : Writable<networkConnectionData> = writable(
     ethereumClient: undefined,
     web3Modal: undefined,
     myAddress: undefined,
-    myENS: undefined
+    myENS: undefined,
+    myRewards:undefined
 });
 
 export const deviceSize = readable({size: 'sm'},(set) => {

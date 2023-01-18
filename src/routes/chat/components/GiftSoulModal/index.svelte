@@ -1,10 +1,10 @@
-<script>
+<script lang="ts">
 	import Cross from '$lib/assets/images/icons/cross.svg';
 	import Borders from '$lib/components/Borders/index.svelte';
 	import SoulTkn from '$lib/assets/images/icons/soultkn.svg';
 	import Button from '$lib/components/Button/index.svelte';
 
-	export let otherSoulName = 'otherSoul.eth';
+	export let soulIdentityValue: string;
 	export let ownVid = true;
 	export let findingSoul = true;
 	export let toggleGiftModal = false;
@@ -27,7 +27,13 @@
 			</button>
 		</div>
 		<div class="flex flex-col gap-6 mt-2 md:mt-3">
-			<span class="font-semibold tracking-wide">Gift {otherSoulName} 1 SoulToken?</span>
+			<span class="font-semibold tracking-wide"
+				>Gift
+				<span class="block overflow-hidden whitespace-nowrap text-ellipsis w-[10rem] md:[13rem]"
+					>{soulIdentityValue}</span
+				>
+				1 SoulToken?
+			</span>
 			<div class="relative flex flex-col gap-3">
 				<Button
 					disabled={ownVid || findingSoul}

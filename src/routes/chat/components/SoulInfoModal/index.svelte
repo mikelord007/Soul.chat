@@ -1,12 +1,12 @@
-<script>
+<script lang="ts">
 	import Cross from '$lib/assets/images/icons/cross.svg';
 	import Borders from '$lib/components/Borders/index.svelte';
 	import SoulTkn from '$lib/assets/images/icons/soultkn.svg';
 	import ReapSoul from '$lib/assets/images/icons/reapSoul.svg';
 	import Button from '$lib/components/Button/index.svelte';
 
-	export let otherSoulName = 'lordmike007.eth';
-	export let soulsEarned = 20;
+	export let soulIdentityValue: string;
+	export let soulsRewarded: string;
 	export let ownVid = true;
 	export let findingSoul = true;
 	export let toggleInfoModal = false;
@@ -29,9 +29,12 @@
 			</button>
 		</div>
 		<div class="flex flex-col gap-6 mt-2">
-			<span class="font-semibold tracking-wide">Soul: &nbsp;&nbsp;{otherSoulName}</span>
+			<span
+				class="font-semibold tracking-wide overflow-hidden whitespace-nowrap text-ellipsis w-[13rem]"
+				>Soul: &nbsp;&nbsp;{soulIdentityValue}</span
+			>
 			<span class="font-semibold tracking-wide flex items-center">
-				Souls Earned: &nbsp;&nbsp{soulsEarned}
+				Souls Earned: &nbsp;&nbsp{soulsRewarded}
 				<img class="inline ml-2 xl:w-8" src={SoulTkn} alt="Soul Token" />
 			</span>
 			<div class="relative flex flex-col gap-3">
