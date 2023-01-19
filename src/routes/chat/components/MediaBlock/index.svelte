@@ -14,6 +14,7 @@
 	export let soulEns: string = '';
 	export let soulAddress: string;
 	export let soulsRewarded: string;
+	export let gotStreamAccess: boolean;
 
 	const borderWidth = $deviceSize.size === '2xl' ? '7px' : '5px';
 	const borderHeight = $deviceSize.size === '2xl' ? '7px' : '5px';
@@ -67,7 +68,11 @@
 		class="py-4 pb-0 md:py-0 md:my-8 h-full lg:h-auto md:border-[3px] lg:border-[4px] xl:border-[5px] md:border-solid md:border-[#797979] relative"
 	>
 		<!-- svelte-ignore a11y-media-has-caption -->
-		{#if findingSoul}
+		{#if !gotStreamAccess}
+			<div class="flex flex-col justify-center items-center absolute inset-0 z-10 gap-4">
+				<span>Waiting for Media Access...</span>
+			</div>
+		{:else if findingSoul}
 			<div class="flex flex-col justify-center items-center absolute inset-0 z-10 gap-4">
 				<span>finding A Soul...</span>
 				<div
@@ -123,5 +128,6 @@
 		transform: rotateY(180deg);
 		-webkit-transform: rotateY(180deg); /* Safari and Chrome */
 		-moz-transform: rotateY(180deg); /* Firefox */
+		/* display: none; */
 	}
 </style>

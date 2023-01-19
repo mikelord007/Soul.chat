@@ -27,18 +27,6 @@
 	let otherSoulBalance: string;
 	let findingSoul = true;
 	let mutualInterests: Array<string>;
-	$: {
-		if (findingSoul) {
-			mutualInterests = ['finding a soul...'];
-		} else {
-			mutualInterests = [];
-			ownSoulParams.interests.forEach((ownInterest) => {
-				if (otherSoulParams.interests.includes(ownInterest)) {
-					mutualInterests.push(ownInterest);
-				}
-			});
-		}
-	}
 
 	const fetchOtherSoulENS = async () => {
 		otherSoulENS = await fetchEnsName({
@@ -58,12 +46,14 @@
 	};
 
 	const playOwnMedia = async () => {
-		stream = await navigator.mediaDevices.getUserMedia({
-			video: true,
-			audio: true
-		});
-		ownVideoElem.srcObject = stream;
-		ownVideoElem.play();
+		try {
+			stream = await navigator.mediaDevices.getUserMedia({
+				video: true,
+				audio: true
+			});
+			ownVideoElem.srcObject = stream;
+			ownVideoElem.play();
+		} catch (e) {}
 	};
 
 	const parseSoulParams = () => {
@@ -85,7 +75,9 @@
 	const initializeSocket = () => {
 		if (!io) io = ioClient('http://localhost:5000');
 
-		io.emit('interests', ownSoulParams);
+		if (stream) {
+			io.emit('interests', ownSoulParams);
+		}
 		makeMeFreeIfImStillLonely();
 	};
 
@@ -240,6 +232,23 @@
 
 		makeMeFreeIfImStillLonely();
 	};
+
+	$: {
+		if (findingSoul) {
+			mutualInterests = ['finding a soul...'];
+		} else {
+			mutualInterests = [];
+			ownSoulParams.interests.forEach((ownInterest) => {
+				if (otherSoulParams.interests.includes(ownInterest)) {
+					mutualInterests.push(ownInterest);
+				}
+			});
+		}
+	}
+
+	$: if (stream) {
+		initializeSocket();
+	}
 </script>
 
 <ShowMutual {mutualInterests} className="px-6 md:px-10 xl:px-14 mt-8 md:mt-10" />
@@ -251,6 +260,7 @@
 		soulsRewarded={otherSoulBalance || 'loading...'}
 		soulAddress={otherSoulAddress || 'loading...'}
 		{findingSoul}
+		gotStreamAccess={stream ? true : false}
 		bind:videoElem={otherVideoElem}
 	/>
 	<MediaBlock
@@ -258,6 +268,7 @@
 		soulEns={$networkConnectionData.myENS}
 		soulsRewarded={$networkConnectionData.myRewards || 'loading...'}
 		soulAddress={$networkConnectionData.myAddress || 'loading...'}
+		gotStreamAccess={stream ? true : false}
 		bind:videoElem={ownVideoElem}
 	/>
 </div>
