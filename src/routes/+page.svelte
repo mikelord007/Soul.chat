@@ -75,7 +75,8 @@
 	<div
 		class="py-3 px-2 max-w-[13rem] xl:text-lg xl:tracking-[2px] xl:max-w-[17rem] font-semibold border-[3px] border-solid border-[#797979] flex items-center align-center"
 	>
-		Souls Earned &nbsp;:&nbsp; 20 <img class="inline ml-4 xl:w-8" src={SoulTkn} alt="Soul Token" />
+		Souls Earned &nbsp;:&nbsp; {$ntwrkData.myRewards ? $ntwrkData.myRewards : '?'}
+		<img class="inline ml-4 xl:w-8" src={SoulTkn} alt="Soul Token" />
 	</div>
 </div>
 <div class="px-12 xl:px-28 mt-8 md:mt-12 xl:mt-16">
