@@ -143,7 +143,7 @@
 </div>
 <div class="flex justify-end">
 	<a
-		class="primeSoul inline-block relative text-right text-[#797979] hover:text-[#8e8c8c] mb-5 text-sm ml-auto mr-8"
+		class="primeSoul inline-block relative text-right text-[#797979] hover:text-[#8e8c8c] mb-3 md:mb-5 text-[10px] md:text-sm m-auto mb:mr-4 md:mr-8"
 		target="_blank"
 		rel="noreferrer"
 		href="https://github.com/mikelord007/">PrimeSoul, the creator</a
@@ -159,7 +159,7 @@
 	.primeSoul::after {
 		position: absolute;
 		content: '';
-		bottom: -0px;
+		bottom: 1px;
 		left: 50%;
 		transform: translateX(-50%);
 		width: 102%;
@@ -169,5 +169,11 @@
 
 	.primeSoul::after:hover {
 		background-color: #797979;
+	}
+
+	@media only screen and (min-width: 768px) {
+		.primeSoul::after {
+			bottom: 0px;
+		}
 	}
 </style>
