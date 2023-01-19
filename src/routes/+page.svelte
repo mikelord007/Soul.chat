@@ -90,7 +90,6 @@
 			width="0.2rem"
 			height="0.2rem"
 			darkBarOpacity="0.15"
-			outlineColor="#434343"
 			applyZIndex
 		/>
 		<div class="px-4 py-3 w-full h-full overflow-scroll flex gap-3 interestSection">
@@ -142,10 +141,33 @@
 			: 'Connect Your Wallet'}
 	</Button>
 </div>
+<div class="flex justify-end">
+	<a
+		class="primeSoul inline-block relative text-right text-[#797979] hover:text-[#8e8c8c] mb-5 text-sm ml-auto mr-8"
+		target="_blank"
+		rel="noreferrer"
+		href="https://github.com/mikelord007/">PrimeSoul, the creator</a
+	>
+</div>
 <InfoModal bind:toggleInfoModal />
 
 <style>
 	.interestSection::-webkit-scrollbar {
 		display: none;
+	}
+
+	.primeSoul::after {
+		position: absolute;
+		content: '';
+		bottom: -0px;
+		left: 50%;
+		transform: translateX(-50%);
+		width: 102%;
+		height: 0.7px;
+		background-color: #605f5f;
+	}
+
+	.primeSoul::after:hover {
+		background-color: #797979;
 	}
 </style>

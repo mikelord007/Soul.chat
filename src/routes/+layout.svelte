@@ -72,8 +72,6 @@
 			myRewards = data.toString();
 		}
 
-		console.log('web3modal: ', web3Modal);
-
 		networkConnectionData.update((prev) => ({
 			...prev,
 			ethereumClient,

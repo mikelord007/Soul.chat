@@ -26,6 +26,9 @@
 		</div>
 		<ul class="flex flex-col gap-4 pl-[1.1rem] mt-3">
 			<li>
+				<span />You are stuck in the 90's internet. The web has only started to take over.
+			</li>
+			<li>
 				<span />Each user is a Soul.
 			</li>
 			<li>
