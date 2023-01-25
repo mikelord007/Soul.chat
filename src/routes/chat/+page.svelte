@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { PUBLIC_BACKEND_URL } from '$env/static/public';
 	import Button from '$lib/components/Button/index.svelte';
 	import MediaBlock from './components/MediaBlock/index.svelte';
 	import ShowMutual from './components/ShowMutual/index.svelte';
@@ -73,7 +74,7 @@
 	};
 
 	const initializeSocket = () => {
-		if (!io) io = ioClient('http://localhost:5000');
+		if (!io) io = ioClient(PUBLIC_BACKEND_URL);
 
 		if (stream) {
 			io.emit('interests', ownSoulParams);
