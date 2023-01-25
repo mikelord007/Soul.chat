@@ -29,7 +29,7 @@
 	};
 
 	const connectSoul = async () => {
-		const chatPage = new URL('http://localhost:3000/chat');
+		const chatPage = new URL(`${window.location.origin}/chat`);
 		const params = new URLSearchParams({
 			interests: JSON.stringify(interests),
 			connectWithMostSoulful: JSON.stringify(connectWithMostSoulful)
