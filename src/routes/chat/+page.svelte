@@ -52,7 +52,7 @@
 				video: true,
 				audio: true
 			});
-			ownVideoElem.srcObject = stream;
+			ownVideoElem.srcObject = new MediaStream(stream.getVideoTracks());
 			ownVideoElem.play();
 		} catch (e) {}
 	};
