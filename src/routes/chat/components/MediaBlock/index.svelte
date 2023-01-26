@@ -65,7 +65,7 @@
 		<img src={SoulTkn} class="w-[1.8rem] aspect-square" alt="" />
 	</div>
 	<div
-		class="py-4 pb-0 md:py-0 md:my-8 h-full lg:h-auto md:border-[3px] lg:border-[4px] xl:border-[5px] md:border-solid md:border-[#797979] relative"
+		class="py-4 pb-0 md:py-0 md:my-8 h-full lg:h-auto md:border-[3px] lg:border-[4px] xl:border-[5px] md:border-solid md:border-[#797979] relative overflow-hidden"
 	>
 		<!-- svelte-ignore a11y-media-has-caption -->
 		{#if !gotStreamAccess}
